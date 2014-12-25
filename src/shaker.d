@@ -13,6 +13,14 @@ extern (C) {
 
 struct SignedMessage {
   ubyte[] data;
+
+  // signedBy returns true if this messages was signed by the keypair, signer.
+  bool signedBy(KeyPair signer) {
+    ubyte output[] = new ubyte[this.data.length - 64];
+    ulong length;
+    int valid = crypto_sign_open(&output[0], &length, &this.data[0], this.data.length, signer.public_key);
+    return (valid == 0);
+  }
 }
 
 struct EncryptedMessage {
@@ -33,26 +41,15 @@ class KeyPair {
     this.secret_key = secretk;
   }
 
-  string sign(string data) {
-    return cast(string)this.sign(cast(ubyte[])data);
+  SignedMessage sign(string data) {
+    return this.sign(cast(ubyte[])data);
   }
 
-  ubyte[] sign(ubyte[] data) {
+  SignedMessage sign(ubyte[] data) {
     ubyte output[] = new ubyte[data.length + 64];
     ulong length;
     crypto_sign(&output[0], &length, &data[0], data.length, this.secret_key);
-    return output;
-  }
-
-  bool valid(string data, KeyPair other) {
-    return valid(cast(ubyte[])data, other);
-  }
-
-  bool valid(ubyte[] data, KeyPair other) {
-    ubyte output[] = new ubyte[data.length - 64];
-    ulong length;
-    int valid = crypto_sign_open(&output[0], &length, &data[0], data.length, other.public_key);
-    return (valid == 0);
+    return SignedMessage(output);
   }
 
   EncryptedMessage encrypt(string data, KeyPair other) {
@@ -71,11 +68,16 @@ class KeyPair {
     crypto_box_open_easy(&output[0], &msg.message[0], msg.message.length, msg.nonce, other.public_key, this.secret_key); 
     return output;
   }
+
 }
 
-//void main() {
-//  KeyPair kp = new KeyPair;
-//  KeyPair kp2 = new KeyPair;
-//  string data = kp.sign("this is a test");
-//  writeln(kp.valid(data, kp));
-//}
+unittest {
+  KeyPair bob = new KeyPair;
+  KeyPair alice = new KeyPair;
+
+  // Test that key signing works
+  SignedMessage data = bob.sign("hey alice this is bob!");
+  assert(data.signedBy(bob));
+  assert(!data.signedBy(alice));
+}
+
