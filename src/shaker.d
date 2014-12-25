@@ -4,11 +4,12 @@ import std.stdio;
 
 extern (C) {
   int crypto_box_keypair(ref ubyte pk[32], ref ubyte sk[32]);
-  int crypto_sign_keypair(ref ubyte pk[32], ref ubyte sk[64]);
   int crypto_box_easy(ubyte*, ubyte*, ulong, ref ubyte[24], ref ubyte[32], ref ubyte[32]);
+  int crypto_box_open_easy(ubyte*, ubyte*, ulong, ref ubyte[24], ref ubyte[32], ref ubyte[32]);
+  int crypto_sign_keypair(ref ubyte pk[32], ref ubyte sk[64]);
   int crypto_sign(ubyte*, ulong*, ubyte*, ulong, ref ubyte[64]);
   int crypto_sign_open(ubyte*, ulong*, ubyte *, ulong, ref ubyte[32]);
-  int crypto_box_open_easy(ubyte*, ubyte*, ulong, ref ubyte[24], ref ubyte[32], ref ubyte[32]);
+  void randombytes_buf(void *, size_t);
 }
 
 struct SignedMessage {
@@ -61,20 +62,31 @@ class BoxKeyPair {
     crypto_box_keypair(this.public_key, this.secret_key);
   }
 
+  this(ubyte pkey[32], ubyte skey[32]) {
+    this.public_key = pkey;
+    this.secret_key = skey;
+  }
+
   EncryptedMessage encrypt(string data, BoxKeyPair other) {
     return this.encrypt(cast(ubyte[])data, other);
   }
 
   EncryptedMessage encrypt(ubyte[] data, BoxKeyPair other) {
+    ubyte nonce[24];
+    randombytes_buf(&nonce[0], 24);
+    return this.encrypt(data, nonce, other);
+  }
+
+  EncryptedMessage encrypt(ubyte[] data, ubyte[24] nonce, BoxKeyPair other) {
     ubyte output[] = new ubyte[data.length + 16];
-    ubyte nonce[24]; // TODO
+
     crypto_box_easy(&output[0], &data[0], data.length, nonce, other.public_key, this.secret_key);
     return EncryptedMessage(output, nonce);
   }
 
   ubyte[] decrypt(EncryptedMessage msg, BoxKeyPair other) {
     ubyte output[] = new ubyte[msg.message.length - 16];
-    crypto_box_open_easy(&output[0], &msg.message[0], msg.message.length, msg.nonce, other.public_key, this.secret_key); 
+    crypto_box_open_easy(&output[0], &msg.message[0], msg.message.length, msg.nonce, other.public_key, this.secret_key);
     return output;
   }
 
