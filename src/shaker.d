@@ -106,5 +106,12 @@ unittest {
   // Test that encryption works
   EncryptedMessage emsg = jim.encrypt("hey alex, your password is 1", alex);
   assert(alex.decrypt(emsg, jim) == "hey alex, your password is 1");
+
+  // Test that encryption with custom nonce works
+  ubyte nonce[24] = cast(ubyte[24])"nonce";
+  ubyte msg[] = cast(ubyte[])"test";
+  EncryptedMessage noncemsg = jim.encrypt(msg, nonce, alex);
+  assert(alex.decrypt(noncemsg, jim) == msg);
+  assert(noncemsg.nonce == nonce);
 }
 
