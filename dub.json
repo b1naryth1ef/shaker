@@ -1,0 +1,10 @@
+{
+  "name": "shaker",
+  "description": "A wrapper around libsodium",
+  "authors": ["Andrei Zbikowski"],
+  "homepage": "http://github.com/b1naryth1ef/shaker",
+  "license": "GPL-2.0",
+  "dependencies": {},
+  "libs": ["sodium"]
+}
+
