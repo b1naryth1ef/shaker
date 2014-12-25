@@ -73,9 +73,9 @@ class KeyPair {
   }
 }
 
-void main() {
-  KeyPair kp = new KeyPair;
-  KeyPair kp2 = new KeyPair;
-  string data = kp.sign("this is a test");
-  writeln(kp.valid(data, kp));
-}
+//void main() {
+//  KeyPair kp = new KeyPair;
+//  KeyPair kp2 = new KeyPair;
+//  string data = kp.sign("this is a test");
+//  writeln(kp.valid(data, kp));
+//}

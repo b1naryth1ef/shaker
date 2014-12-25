@@ -1,2 +1,6 @@
 shaker
 shaker.o
+.dub/
+__test__library__
+libshaker.a
+dub.selections.json
