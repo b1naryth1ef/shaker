@@ -1,5 +1,5 @@
 module shaker;
 
-import box;
-import random;
-import sign;
+public import box;
+public import random;
+public import sign;
