@@ -4,6 +4,7 @@ extern (C) {
   int crypto_sign_keypair(ref ubyte pk[32], ref ubyte sk[64]);
   int crypto_sign(ubyte *sm, ulong *smlen, ubyte *m, ulong mlen, ref ubyte sk[64]);
   int crypto_sign_open(ubyte *m, ulong *mlen, ubyte *sm, ulong smlen, ref ubyte pk[32]);
+  size_t crypto_sign_bytes();
 }
 
 struct SignedMessage {
@@ -11,7 +12,7 @@ struct SignedMessage {
 
   // signedBy returns true if this messages was signed by the keypair, signer.
   bool signedBy(SignKeyPair signer) {
-    ubyte output[] = new ubyte[this.data.length - 64];
+    ubyte output[] = new ubyte[this.data.length - crypto_sign_bytes()];
     ulong length;
     int valid = crypto_sign_open(&output[0], &length, &this.data[0], this.data.length, signer.public_key);
     return (valid == 0);
@@ -23,7 +24,7 @@ class SignKeyPair {
   ubyte secret_key[64];
 
   this() {
-    crypto_sign_keypair(this.public_key, this.secret_key);
+    assert(crypto_sign_keypair(this.public_key, this.secret_key) == 0);
   }
 
   this(ubyte pubk[32], ubyte secretk[64]) {
@@ -36,9 +37,9 @@ class SignKeyPair {
   }
 
   SignedMessage sign(ubyte[] data) {
-    ubyte output[] = new ubyte[data.length + 64];
+    ubyte output[] = new ubyte[data.length + crypto_sign_bytes()];
     ulong length;
-    crypto_sign(&output[0], &length, &data[0], data.length, this.secret_key);
+    assert(crypto_sign(&output[0], &length, &data[0], data.length, this.secret_key) == 0);
     return SignedMessage(output);
   }
 }
