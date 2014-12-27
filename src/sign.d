@@ -53,6 +53,5 @@ unittest {
   SignedMessage data = bob.sign("hey alice this is bob!");
   assert(data.signedBy(bob));
   assert(!data.signedBy(alice));
-
 }
 

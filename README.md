@@ -11,7 +11,7 @@ Shaker provides two main avenues for using it, the first being a lightweight wra
 auto alice = new BoxKeyPair;
 auto bob = new BoxKeyPair;
 
-EncryptedMessage message = alice.encrypt("Hey Bob, I think your sexy!", bob);
+EncryptedBoxMessage message = alice.encrypt("Hey Bob, I think your sexy!", bob);
 bob.decrypt(message, alice); // "Hey Bob, I think your sexy!"
 ```
 
