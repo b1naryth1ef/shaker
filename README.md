@@ -11,8 +11,8 @@ Shaker provides two main avenues for using it, the first being a lightweight wra
 auto alice = new BoxKeyPair;
 auto bob = new BoxKeyPair;
 
-EncryptedBoxMessage message = alice.encrypt("Hey Bob, I think your sexy!", bob);
-bob.decrypt(message, alice); // "Hey Bob, I think your sexy!"
+EncryptedBoxMessage message = alice.encrypt("Hey Bob, I think you're sexy!", bob);
+bob.decrypt(message, alice); // "Hey Bob, I think you're sexy!"
 ```
 
 ### Signing Data
@@ -20,7 +20,7 @@ bob.decrypt(message, alice); // "Hey Bob, I think your sexy!"
 auto alice = new SignKeyPair;
 auto bob = new SignKeyPair;
 
-SignedMessage message = alice.sign("This is definitly alice talking!");
+SignedMessage message = alice.sign("This is definitely alice talking!");
 message.signedBy(bob); // true
 ```
 
