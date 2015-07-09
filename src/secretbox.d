@@ -4,18 +4,18 @@ import random;
 import std.stdio;
 
 extern (C) {
-  int crypto_secretbox_easy(ubyte *c, ubyte *m, ulong mlen, ref ubyte n[24], ref ubyte k[32]);
-  int crypto_secretbox_open_easy(ubyte *m, ubyte *c, ulong clen, ref ubyte n[24], ref ubyte k[32]);
+  int crypto_secretbox_easy(ubyte *c, ubyte *m, ulong mlen, ref ubyte[24] n, ref ubyte[32] k);
+  int crypto_secretbox_open_easy(ubyte *m, ubyte *c, ulong clen, ref ubyte[24] n, ref ubyte[32] k);
   size_t crypto_secretbox_macbytes();
 }
 
 unittest {
-  ubyte nonce[24];
-  ubyte key[32];
-  ubyte key2[32];
-  ubyte message[] = cast(ubyte[])"This is a test";
-  ubyte output[] = new ubyte[message.length + crypto_secretbox_macbytes()];
-  ubyte result[] = new ubyte[message.length];
+  ubyte[24] nonce;
+  ubyte[32] key;
+  ubyte[32] key2;
+  ubyte[] message = cast(ubyte[])"This is a test";
+  ubyte[] output = new ubyte[message.length + crypto_secretbox_macbytes()];
+  ubyte[] result = new ubyte[message.length];
 
   randombytes_buf(&nonce[0], nonce.length);
   randombytes_buf(&key[0], key.length);
