@@ -4,16 +4,16 @@
   "authors": ["Andrei Zbikowski"],
   "homepage": "http://github.com/b1naryth1ef/shaker",
   "license": "GPL-2.0",
+  "libs": ["sodium"],
   "configurations": [
     {
       "name": "shaker-dynamic",
-      "libs": ["sodium"],
       "platforms": ["linux"]
     },
     {
       "name": "shaker-static-x64",
       "sourceFiles": ["/usr/lib/x86_64-linux-gnu/libsodium.a"],
-      "platforms": ["linux", "x86_64"]
+      "platforms": ["linux"]
     }
   ]
 }
